@@ -1,0 +1,21 @@
+{%extends 'main_temp.html'%} {%block content%}
+<div class="jumbotron">
+  <p>Let see how you performed!!</p>
+  {%if report%}
+  <p>Your username passed the 3 requirements!</p>
+  {%else%}
+  <p>Oh no! Looks like you had issues with your username!</p>
+  <p>Here are the requirements you failed:</p>
+  <ul>
+    {%if not last_character_isdigit%}
+    <li>You didn't end your username with a number.</li>
+    {%endif%} {%if not is_lower_character%}
+    <li>You didn't use an lowercase character.</li>
+    {%endif%} {%if not is_upper_character%}
+    <li>You didn't use an uppercase character.</li>
+    {%endif%}
+  </ul>
+  {%endif%}
+</div>
+<!--  -->
+{%endblock%}

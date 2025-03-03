@@ -1,0 +1,5 @@
+{
+  "editor.scrollBeyondLastLine": true,
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "terminal.integrated.shellIntegration.enabled": false
+}
