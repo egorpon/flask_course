@@ -27,20 +27,25 @@
     <title></title>
   </head>
   <body>
-    {%for mess in get_flashed_messages()%}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-      <button
-        type="button"
-        class="fade close"
-        data-dismiss="alert"
-        aria-label="Close"
-      >
-        <span aria-hidden="true">&times;</span>
-      </button>
-      {{mess}}
-    </div>
-    {%endfor%}
+    <div class="container">
+      {%for mess in get_flashed_messages()%}
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <button
+          type="button"
+          class="fade close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+        {{mess}}
+      </div>
+      {%endfor%}
 
-    <form method="POST">{{form.hidden_tag()}} {{form.submit()}}</form>
+      <form method="POST">
+        {{form.hidden_tag()}}
+        {{form.breed.label}}{{form.breed}}{{form.submit()}}
+      </form>
+    </div>
   </body>
 </html>
