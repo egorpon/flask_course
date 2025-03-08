@@ -11,7 +11,10 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'mysecret'
 
-blueprint = make_google_blueprint(client_id='125388040161-8mahanjlej17oetb590thekkoj19pmf3.apps.googleusercontent.com',             client_secret='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',offline=True,scope=['profile','email'])
+blueprint = make_google_blueprint(client_id=os.getenv('GOOGLE_CLIENT_ID'),
+                                  client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+                                  offline=True,
+                                  scope=['profile','email'])
 
 
 app.register_blueprint(blueprint,url_prefix='/login')
