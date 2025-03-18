@@ -2,19 +2,36 @@ from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from secure_check import authenticate 
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+import os
 
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkey'
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+
+db = SQLAlchemy(app)
+Migrate(app,db)
 
 api = Api(app)
 jwt = JWTManager(app)
 
 
-puppies = []
+class Puppy(db.Model):
 
+    name = db.Column(db.String(80), primary_key = True)
+
+    def __init__(self,name):
+        self.name = name
+
+    def json(self):
+        return {'name':self.name}
+        
 
 @app.route('/login',methods =['POST'])
 def login():
@@ -40,31 +57,36 @@ class PuppyNames(Resource):
     
     def get(self, name):
         
-        for pup in puppies:
-            if pup['name'] == name:
-                return pup
-            
-        return {'name': None}, 404
+        pup = Puppy.query.filter_by(name = name).first()
+        
+        if pup:
+            return pup.json()
+        else:
+            return {'name': None}, 404
     
     def post(self, name):
         
-        pup = {'name':name}
-        puppies.append(pup)
+        pup = Puppy(name=name)
+        db.session.add(pup)
+        db.session.commit()
 
-        return pup
+        return pup.json()
     
     def delete(self, name):
         
-        for index, pup in enumerate(puppies):
-            if pup['name'] == name:
-                deleted_pup = puppies.pop(index)
-                return {'note': 'delete success'}
+        pup = Puppy.query.filter_by(name=name).first()
+        db.session.delete(pup)
+        db.session.commit()
+        return {'note': 'delete success'}
             
      
 class AllNames(Resource):
-    @jwt_required()
+
+    # @jwt_required()
     def get(self):
-        return {'puppies':puppies}
+        puppies = Puppy.query.all()
+
+        return [pup.json() for pup in puppies]
     
 
 api.add_resource(PuppyNames,'/puppy/<string:name>')
